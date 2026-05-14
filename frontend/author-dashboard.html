@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Author Dashboard – BookHaven</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- Top Navbar -->
+<nav class="navbar navbar-dark" style="background:var(--primary)">
+  <div class="container-fluid">
+    <span class="navbar-brand"><span>Book</span>Haven – Author</span>
+    <div class="d-flex align-items-center gap-3">
+      <span class="text-white small" id="author-name"></span>
+      <a href="index.html" class="btn btn-sm btn-outline-light"><i class="bi bi-house"></i> Store</a>
+      <a href="#" class="btn btn-sm btn-outline-danger" onclick="logout()">
+        <i class="bi bi-box-arrow-right"></i> Logout
+      </a>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid">
+  <div class="row">
+
+    <!-- Sidebar -->
+    <div class="col-md-2 px-0 sidebar">
+      <nav class="nav flex-column pt-2">
+        <a class="nav-link active" href="#" data-section="overview" onclick="showAuthorSection('overview')">
+          <i class="bi bi-speedometer2 me-2"></i>Overview
+        </a>
+        <a class="nav-link" href="#" data-section="books" onclick="showAuthorSection('books')">
+          <i class="bi bi-book me-2"></i>My Books
+        </a>
+        <a class="nav-link" href="#" data-section="addbook" onclick="showAuthorSection('addbook')">
+          <i class="bi bi-plus-circle me-2"></i>Add Book
+        </a>
+        <a class="nav-link" href="#" data-section="stats" onclick="showAuthorSection('stats')">
+          <i class="bi bi-bar-chart me-2"></i>Sales Stats
+        </a>
+        <a class="nav-link" href="#" data-section="profile" onclick="showAuthorSection('profile')">
+          <i class="bi bi-person-gear me-2"></i>Profile
+        </a>
+      </nav>
+    </div>
+
+    <!-- Main -->
+    <div class="col-md-10 p-4">
+
+      <!-- ── Overview ── -->
+      <div id="section-overview" class="author-section">
+        <h4 class="fw-bold mb-4">Author Overview</h4>
+        <div class="row g-3 mb-4">
+          <div class="col-md-4">
+            <div class="stat-card primary">
+              <div class="stat-number" id="auth-total-books">–</div>
+              <div class="stat-label">My Books</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="stat-card success">
+              <div class="stat-number" id="auth-units-sold">–</div>
+              <div class="stat-label">Units Sold</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="stat-card warning">
+              <div class="stat-number" id="auth-total-revenue">–</div>
+              <div class="stat-label">Revenue Earned</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white fw-bold">Top Performing Books</div>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr><th>Title</th><th>Genre</th><th>Price</th><th>Units Sold</th><th>Revenue</th></tr>
+              </thead>
+              <tbody id="author-top-books-body">
+                <tr><td colspan="5" class="text-center text-muted">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── My Books ── -->
+      <div id="section-books" class="author-section d-none">
+        <h4 class="fw-bold mb-4">My Books</h4>
+        <div class="card border-0 shadow-sm">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr><th>#</th><th>Title</th><th>Genre</th><th>Price</th><th>Stock</th><th>Rating</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="author-books-body">
+                <tr><td colspan="7" class="text-center text-muted py-3">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Add Book ── -->
+      <div id="section-addbook" class="author-section d-none">
+        <h4 class="fw-bold mb-4">Add New Book</h4>
+        <div class="card border-0 shadow-sm p-4" style="max-width:680px">
+          <form id="add-book-form">
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
+                <input type="text" name="title" class="form-control" required>
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-semibold">Description</label>
+                <textarea name="description" class="form-control" rows="3"></textarea>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">ISBN</label>
+                <input type="text" name="isbn" class="form-control" placeholder="978-…">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Price <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text">$</span>
+                  <input type="number" name="price" class="form-control" step="0.01" min="0" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Stock Quantity</label>
+                <input type="number" name="stock_quantity" class="form-control" value="0" min="0">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Genre</label>
+                <select name="genre_id" id="author-book-genre" class="form-select">
+                  <option value="">Select Genre (optional)</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-semibold">Cover Image URL</label>
+                <input type="url" name="image_url" class="form-control" placeholder="https://…">
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary me-2">
+                  <i class="bi bi-plus-circle me-1"></i>Publish Book
+                </button>
+                <button type="reset" class="btn btn-outline-secondary">Reset</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ── Sales Stats ── -->
+      <div id="section-stats" class="author-section d-none">
+        <h4 class="fw-bold mb-2">Sales Statistics</h4>
+        <p class="text-muted mb-4">
+          Total Revenue: <strong id="stats-total-revenue">–</strong>
+        </p>
+        <div class="card border-0 shadow-sm">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr><th>Title</th><th>Price</th><th>Units Sold</th><th>Revenue</th><th>Rating</th></tr>
+              </thead>
+              <tbody id="author-stats-body">
+                <tr><td colspan="5" class="text-center text-muted">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Profile ── -->
+      <div id="section-profile" class="author-section d-none">
+        <h4 class="fw-bold mb-4">My Profile</h4>
+        <div class="card border-0 shadow-sm p-4" style="max-width:500px">
+          <form onsubmit="saveAuthorProfile(event)">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Full Name</label>
+              <input type="text" id="profile-full-name" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Email</label>
+              <input type="email" id="profile-email" class="form-control" disabled>
+              <div class="form-text">Email cannot be changed</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Biography</label>
+              <textarea id="profile-bio" class="form-control" rows="4"
+                        placeholder="Tell readers about yourself…"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-save me-1"></i>Save Profile
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Edit Book Modal -->
+<div class="modal fade" id="editBookModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold">Edit Book</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form onsubmit="saveEditBook(event)">
+        <div class="modal-body">
+          <input type="hidden" id="edit-book-id">
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label fw-semibold">Title</label>
+              <input type="text" id="edit-book-title" class="form-control" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold">Description</label>
+              <textarea id="edit-book-description" class="form-control" rows="3"></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">ISBN</label>
+              <input type="text" id="edit-book-isbn" class="form-control">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Price</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input type="number" id="edit-book-price" class="form-control" step="0.01" min="0">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Stock</label>
+              <input type="number" id="edit-book-stock" class="form-control" min="0">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Genre</label>
+              <select id="edit-book-genre" class="form-select"></select>
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold">Image URL</label>
+              <input type="url" id="edit-book-image" class="form-control">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i>Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script src="js/author.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!requireAuth()) return;
+    if (!requireRole('author', 'index.html')) return;
+
+    const user = getUser();
+    document.getElementById('author-name').textContent = user?.full_name || '';
+
+    showAuthorSection('overview');
+  });
+</script>
+</body>
+</html>
