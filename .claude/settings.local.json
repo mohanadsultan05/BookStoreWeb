@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python database/seed.py)",
+      "Bash(Start-Process python *)",
+      "Bash(Out-Null)",
+      "Bash(Start-Sleep -Seconds 3)",
+      "Bash(Invoke-RestMethod -Uri \"http://localhost:5000/api/auth/login\" -Method POST -ContentType \"application/json\" -Body '{\"email\":\"john@example.com\",\"password\":\"Customer@123\"}')",
+      "Bash(ConvertTo-Json -Depth 3)",
+      "PowerShell($proc = Start-Process python -WorkingDirectory \"c:\\\\Users\\\\isc\\\\OneDrive\\\\Desktop\\\\University\\\\semester 6\\\\Software Architecture\\\\Final Project\\\\backend\" -ArgumentList \"app.py\" -PassThru -WindowStyle Hidden; Start-Sleep -Seconds 3; try { $res = Invoke-RestMethod -Uri \"http://localhost:5000/api/auth/login\" -Method POST -ContentType \"application/json\" -Body '{\"email\":\"john@example.com\",\"password\":\"Customer@123\"}'; $res | ConvertTo-Json -Depth 3 } catch { $_.Exception.Message }; $proc | Stop-Process -Force)"
+    ]
+  }
+}

@@ -42,7 +42,7 @@ def seed():
         admin_user.set_password('Admin@123')
         db.session.add(admin_user)
         db.session.flush()
-        admin_profile = Administrator(user_id=admin_user.id, admin_role='System Administrator')
+        admin_profile = Administrator(user_id=admin_user.id, full_name='Admin User', admin_role='System Administrator')
         db.session.add(admin_profile)
         db.session.flush()
 
@@ -76,7 +76,7 @@ def seed():
             u.set_password('Customer@123')
             db.session.add(u)
             db.session.flush()
-            c = Customer(user_id=u.id, address=address, phone=phone)
+            c = Customer(user_id=u.id, full_name=full_name, address=address, phone=phone)
             db.session.add(c)
             db.session.flush()
             customer_records.append(c)

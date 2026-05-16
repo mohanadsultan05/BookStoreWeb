@@ -50,7 +50,7 @@ def register():
         ))
 
     db.session.commit()
-    token = create_access_token(identity=user.id)
+    token = create_access_token(identity=str(user.id))
     return jsonify({
         'message': 'Registration successful',
         'token': token,
@@ -73,7 +73,7 @@ def login():
     if not user or not user.check_password(password):
         return jsonify({'error': 'Invalid email or password'}), 401
 
-    token = create_access_token(identity=user.id)
+    token = create_access_token(identity=str(user.id))
     user_data = user.to_dict()
 
     if user.role == 'customer' and user.customer_profile:

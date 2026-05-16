@@ -39,7 +39,7 @@ class Customer(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), unique=True, nullable=False)
-    full_name = db.Column(db.String(100), nullable=False)
+    full_name = db.Column(db.String(100))
     address = db.Column(db.String(255))
     phone = db.Column(db.String(20))
     payment_info = db.Column(db.String(255))
@@ -62,9 +62,7 @@ class Administrator(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), unique=True, nullable=False)
-
-    full_name = db.Column(db.String(100), nullable=False)
-    
+    full_name = db.Column(db.String(100))
     admin_role = db.Column(db.String(50), default='Administrator')
 
     managed_books = db.relationship('Book', backref='admin', lazy=True, foreign_keys='Book.admin_id')

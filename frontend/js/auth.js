@@ -31,11 +31,27 @@ function getHeaders(json = true) {
 }
 
 async function apiFetch(path, options = {}) {
+  const { headers: optHeaders, ...restOptions } = options;
   const res = await fetch(`${API_BASE}${path}`, {
-    headers: getHeaders(),
-    ...options
+    ...restOptions,
+    headers: { ...getHeaders(), ...(optHeaders || {}) }
   });
   const data = await res.json().catch(() => ({}));
+
+  // Stale / expired token — clear session so the user is treated as logged-out
+  if (res.status === 401 && getToken()) {
+    clearSession();
+    // Refresh the navbar to show guest state
+    if (typeof updateNavbar === 'function') updateNavbar();
+    // Only redirect if on a page that requires auth
+    const protectedPages = ['cart.html', 'orders.html', 'admin-dashboard.html', 'author-dashboard.html', 'profile.html'];
+    const currentPage = window.location.pathname.split('/').pop();
+    if (protectedPages.includes(currentPage)) {
+      window.location.href = 'login.html';
+    }
+    throw { status: 401, message: 'Session expired. Please log in again.', data };
+  }
+
   if (!res.ok) throw { status: res.status, message: data.error || 'Request failed', data };
   return data;
 }
@@ -90,6 +106,7 @@ function setupLoginForm() {
     const email    = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const errEl    = document.getElementById('login-error');
+    if (errEl) errEl.classList.add('d-none');
 
     try {
       const data = await apiFetch('/auth/login', {
@@ -99,11 +116,14 @@ function setupLoginForm() {
       setSession(data.token, data.user);
 
       // Redirect based on role
-      if (data.user.role === 'admin')    window.location.href = 'admin-dashboard.html';
+      if (data.user.role === 'admin')       window.location.href = 'admin-dashboard.html';
       else if (data.user.role === 'author') window.location.href = 'author-dashboard.html';
-      else window.location.href = 'index.html';
+      else                                  window.location.href = 'orders.html';
     } catch (err) {
-      if (errEl) errEl.textContent = err.message;
+      if (errEl) {
+        errEl.textContent = err.message || 'Login failed. Please check your credentials.';
+        errEl.classList.remove('d-none');
+      }
     }
   });
 }
@@ -149,9 +169,9 @@ function setupRegisterForm() {
     try {
       const data = await apiFetch('/auth/register', { method: 'POST', body: JSON.stringify(payload) });
       setSession(data.token, data.user);
-      if (data.user.role === 'admin')    window.location.href = 'admin-dashboard.html';
+      if (data.user.role === 'admin')       window.location.href = 'admin-dashboard.html';
       else if (data.user.role === 'author') window.location.href = 'author-dashboard.html';
-      else window.location.href = 'index.html';
+      else                                  window.location.href = 'orders.html';
     } catch (err) {
       if (errEl) errEl.textContent = err.message;
     }

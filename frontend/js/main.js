@@ -56,7 +56,10 @@ async function updateCartBadge() {
     const data = await apiFetch('/cart');
     badge.textContent = data.count || 0;
     badge.style.display = data.count > 0 ? 'inline' : 'none';
-  } catch (_) {}
+  } catch (_) {
+    // Silently hide badge on any error (token cleared by apiFetch if 401)
+    if (badge) badge.style.display = 'none';
+  }
 }
 
 function showSpinner() {
@@ -105,16 +108,23 @@ function buildBookCard(book) {
 }
 
 async function addToCart(bookId, event) {
-  if (event) event.stopPropagation();
+  if (event) { event.preventDefault(); event.stopPropagation(); }
   if (!getToken()) { window.location.href = 'login.html'; return; }
   const user = getUser();
-  if (user && user.role !== 'customer') { showToast('Only customers can add to cart', 'error'); return; }
+  if (!user) { window.location.href = 'login.html'; return; }
+  if (user.role !== 'customer') { showToast('Only customers can add to cart', 'error'); return; }
 
   try {
     await apiFetch('/cart/add', { method: 'POST', body: JSON.stringify({ book_id: bookId, quantity: 1 }) });
     showToast('Added to cart!');
     updateCartBadge();
   } catch (err) {
-    showToast(err.message || 'Failed to add to cart', 'error');
+    if (err.status === 401) {
+      // apiFetch already cleared the session; redirect to login
+      showToast('Session expired. Redirecting to login…', 'error');
+      setTimeout(() => window.location.href = 'login.html', 1500);
+    } else {
+      showToast(err.message || 'Failed to add to cart', 'error');
+    }
   }
 }

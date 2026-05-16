@@ -19,6 +19,7 @@ CREATE TABLE users (
 CREATE TABLE customers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT UNIQUE NOT NULL,
+	full_name VARCHAR(100) NOT NULL,
     address VARCHAR(255),
     phone VARCHAR(20),
     payment_info VARCHAR(255),
@@ -35,7 +36,7 @@ CREATE TABLE customers (
 CREATE TABLE administrators (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT UNIQUE NOT NULL,
-	full_name VARCHAR(100) NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
     admin_role VARCHAR(50),
     
 
@@ -235,10 +236,20 @@ VALUES
 -- ==========================================
 -- SAMPLE CUSTOMER
 -- ==========================================
-INSERT INTO customers (user_id, address, phone)
+INSERT INTO customers (user_id, full_name, address, phone)
 VALUES
-(2, 'Istanbul, Turkey', '+90 555 123 4567');
+(2, 'Yusuf Ahmed','Istanbul, Turkey', '+90 555 123 4567');
 
+-- ==========================================
+-- SAMPLE ADMIN
+-- ==========================================
+INSERT INTO administrators (
+    user_id,
+    full_name,
+    admin_role
+)
+VALUES
+(1,  'John Michel','System Administrator');
 
 -- ==========================================
 -- SAMPLE BOOKS
